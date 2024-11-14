@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FackFace</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .images {
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+        }
+        img {
+            width: 200px;
+            height: 200px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        img:hover {
+            transform: scale(1.1);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .ranking {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>FackFace</h1>
+<h3>どちらが嫌いですか？</h3>
+    <div class="images">
+        <img id="image1" src="" alt="Image 1" onclick="selectImage(1)">
+        <img id="image2" src="" alt="Image 2" onclick="selectImage(2)">
+    </div>
+    <button onclick="nextPair()">次のペアへ</button>
+
+
+
+    <script>
+        // 画像リスト（画像のURL）
+        const images = [
+            "images/13.jfif",
+            "images/23.png",
+            "images/24.png",
+            "images/28.png",
+            "images/29.png",
+            "images/06.jfif",
+            "images/07.jfif",
+            "images/09.jfif",
+            "images/16.jfif",
+            "images/19.png"
+        ];
+
+        let voteCounts = {}; // 画像ごとの得票数を格納するオブジェクト
+        let currentPair = []; // 現在のペア画像
+
+        // ランダムに2つの画像を選んで表示する関数
+        function loadRandomImages() {
+            if (images.length < 2) return; // 画像が2つ未満の場合はスキップ
+
+            let idx1 = Math.floor(Math.random() * images.length);
+            let idx2;
+            do {
+                idx2 = Math.floor(Math.random() * images.length);
+            } while (idx1 === idx2);
+
+            // 現在のペアに選ばれた画像を格納
+            currentPair = [images[idx1], images[idx2]];
+
+            // 画像のsrcを更新
+            document.getElementById("image1").src = currentPair[0];
+            document.getElementById("image2").src = currentPair[1];
+        }
+
+        // 画像が選ばれたときの処理
+        function selectImage(selected) {
+            let winner = currentPair[selected - 1];
+
+            // 得票数をカウント
+            if (!voteCounts[winner]) {
+                voteCounts[winner] = 0;
+            }
+            voteCounts[winner]++;
+
+            alert(`"${winner}"が選ばれました!`);
+
+            // 次のペアを表示
+            nextPair();
+        }
+
+        // 次のペアを表示
+        function nextPair() {
+            loadRandomImages();
+            updateRanking(); // ランキングを更新
+        }
+
+        // ランキングを表示する関数
+        function updateRanking() {
+            // 得票数が多い順に並べ替え
+            let sortedVotes = Object.keys(voteCounts).sort((a, b) => voteCounts[b] - voteCounts[a]);
+
+            // ランキングリストを更新
+            const rankingList = document.getElementById("rankingList");
+            rankingList.innerHTML = "";  // 既存のランキングをクリア
+
+            sortedVotes.forEach((imageSrc, index) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = `${index + 1}. ${imageSrc} - ${voteCounts[imageSrc]}票`;
+                rankingList.appendChild(listItem);
+            });
+        }
+
+        // 初回ロード
+        loadRandomImages();
+    </script>
+<style>
+h1{
+background-color: brown;
+color: white;
+}
+</body>
+</html>
